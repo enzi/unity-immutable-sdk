@@ -33,8 +33,6 @@ namespace VoltstroStudios.UnityWebBrowser
 
         public async UniTask Init(int engineStartupTimeoutMs, bool redactTokensInLogs, Func<string, string> redactionHandler)
         {
-            Application.OpenURL("https://www.google.com");
-            
             GameObject persistentObject = new GameObject("UWB");
             //var browser = persistentObject.AddComponent<WebBrowserNoUi>();
             var browser = persistentObject.AddComponent<WebBrowserUIBasic>();
