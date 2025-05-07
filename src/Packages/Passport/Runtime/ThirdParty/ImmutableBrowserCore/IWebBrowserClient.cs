@@ -13,7 +13,7 @@ namespace Immutable.Browser.Core
         void LaunchAuthURL(string url, string redirectUri);
 
         // Required for Windows browser only
-#if UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
         void Dispose();
 #endif
 
