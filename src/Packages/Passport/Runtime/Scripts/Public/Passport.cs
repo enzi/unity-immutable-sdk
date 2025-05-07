@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System;
 using System.Text.RegularExpressions;
-#if UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
-#if !IMMUTABLE_CUSTOM_BROWSER
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
+#if !IMMUTABLE_CUSTOM_BROWSER || UNITY_STANDALONE_LINUX
 using VoltstroStudios.UnityWebBrowser;
 using VoltstroStudios.UnityWebBrowser.Core;
 using VoltstroStudios.UnityWebBrowser.Shared;
@@ -25,7 +25,7 @@ using UnityEditor;
 namespace Immutable.Passport
 {
 
-#if UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
     public class Passport : MonoBehaviour
 #else
     public class Passport
@@ -72,7 +72,7 @@ namespace Immutable.Passport
                 _logLevel = value;
                 PassportLogger.CurrentLogLevel = _logLevel;
 
-#if !IMMUTABLE_CUSTOM_BROWSER && (UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN))
+#if !IMMUTABLE_CUSTOM_BROWSER && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN))
                 SetDefaultWindowsBrowserLogLevel();
 #endif
             }
@@ -101,7 +101,7 @@ namespace Immutable.Passport
                 _redactTokensInLogs = value;
                 PassportLogger.RedactionHandler = value ? RedactTokenValues : null;
 
-#if !IMMUTABLE_CUSTOM_BROWSER && (UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN))
+#if !IMMUTABLE_CUSTOM_BROWSER && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN))
                 SetWindowsRedactionHandler();
 #endif
             }
@@ -112,7 +112,7 @@ namespace Immutable.Passport
         private Passport()
         {
             // Handle clean-up tasks when the application is quitting
-#if UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
             Application.quitting += OnQuit;
 #elif UNITY_IPHONE || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
             // Handle deeplinks for iOS and macOS
@@ -146,7 +146,7 @@ namespace Immutable.Passport
             string environment,
             string redirectUri = null,
             string logoutRedirectUri = null
-#if UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
             , int engineStartupTimeoutMs = 60000,
             IWindowsWebBrowserClient windowsWebBrowserClient = null
 #endif
@@ -156,7 +156,7 @@ namespace Immutable.Passport
             {
                 PassportLogger.Info($"{TAG} Initialising Passport...");
 
-#if UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
                 var obj = new GameObject("Passport");
                 Instance = obj.AddComponent<Passport>();
                 DontDestroyOnLoad(obj);
@@ -167,7 +167,7 @@ namespace Immutable.Passport
 
                 // Start initialisation process
                 return Instance.Initialise(
-#if UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
                         engineStartupTimeoutMs, windowsWebBrowserClient
 #endif
                     )
@@ -206,7 +206,7 @@ namespace Immutable.Passport
         /// <param name="engineStartupTimeoutMs">(Windows only) Timeout duration in milliseconds to wait for the default Windows browser engine to start.</param>
         /// <param name="webBrowserClient">(Windows only) Custom Windows browser to use instead of the default browser in the SDK.</param>
         private async UniTask Initialise(
-#if UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
             int engineStartupTimeoutMs, IWindowsWebBrowserClient windowsWebBrowserClient
 #endif
         )
@@ -214,7 +214,7 @@ namespace Immutable.Passport
             try
             {
                 // Initialise the web browser client
-#if UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
                 if (windowsWebBrowserClient != null)
                 {
                     // Use the provided custom Windows browser client
@@ -223,7 +223,7 @@ namespace Immutable.Passport
                 }
                 else
                 {
-#if IMMUTABLE_CUSTOM_BROWSER
+#if IMMUTABLE_CUSTOM_BROWSER && !VOLTSTRO_LINUX
                     throw new PassportException("When 'IMMUTABLE_CUSTOM_BROWSER' is defined in Scripting Define Symbols, " + 
                         " 'windowsWebBrowserClient' must not be null.");
 #else
@@ -262,7 +262,7 @@ namespace Immutable.Passport
             }
         }
 
-#if UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
         private void Awake()
         {
             if (Instance == null)
@@ -574,7 +574,7 @@ namespace Immutable.Passport
         }
 #endif
 
-#if !IMMUTABLE_CUSTOM_BROWSER && (UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN))
+#if !IMMUTABLE_CUSTOM_BROWSER && (UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN))
         /// <summary>
         /// Updates the log severity for the default Windows browser based on the current SDK log level.
         /// </summary>
@@ -596,7 +596,7 @@ namespace Immutable.Passport
         {
             if (Instance?.webBrowserClient is WebBrowserClient browserClient)
             {
-                browserClient.Logger = new DefaultUnityWebBrowserLogger(redactionHandler: _redactTokensInLogs ? RedactTokenValues : null);
+                browserClient.Logger = new DefaultUnityWebBrowserLogger();//redactionHandler: _redactTokensInLogs ? RedactTokenValues : null);
             }
         }
 #endif
@@ -690,7 +690,7 @@ namespace Immutable.Passport
         private void DisposeAll()
         {
             // Dispose of the web browser client for Windows only
-#if UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
             if (webBrowserClient != null)
             {
                 webBrowserClient.Dispose();

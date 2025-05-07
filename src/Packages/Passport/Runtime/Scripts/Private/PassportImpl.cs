@@ -377,8 +377,10 @@ namespace Immutable.Passport
                 pkceCompletionSource = task;
                 pkceLoginOnly = false;
 
-#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
+#if UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
                 WindowsDeepLink.Initialise(redirectUri, OnDeepLinkActivated);
+#elif UNITY_STANDALONE_LINUX
+                LinuxDeepLink.Initialise(redirectUri, OnDeepLinkActivated);
 #endif
 
                 _ = LaunchAuthUrl();
@@ -589,8 +591,10 @@ namespace Immutable.Passport
 
                 UniTaskCompletionSource<bool> task = new UniTaskCompletionSource<bool>();
                 pkceCompletionSource = task;
-#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
+#if UNITY_STANDALONE_WIN || (UNITY_ANDROID && UNITY_EDITOR_WIN) || (UNITY_IPHONE && UNITY_EDITOR_WIN)
                 WindowsDeepLink.Initialise(logoutRedirectUri, OnDeepLinkActivated);
+#elif UNITY_STANDALONE_LINUX
+                LinuxDeepLink.Initialise(redirectUri, OnDeepLinkActivated);
 #endif
                 LaunchLogoutPKCEUrl(hardLogout);
                 return task.Task;
