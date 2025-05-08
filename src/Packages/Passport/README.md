@@ -1,12 +1,23 @@
-<div align="center">
-  <p align="center">
-    <a  href="https://docs.x.immutable.com/docs">
-      <img src="https://cdn.dribbble.com/users/1299339/screenshots/7133657/media/837237d447d36581ebd59ec36d30daea.gif" width="280"/>
-    </a>
-  </p>
-</div>
 
----
+# Fork to enable Linux support to Passport
+
+Since the outdated Voltstro package got removed, add it back:
+
+Add to manifest.json `scopedRegistries`
+```
+{
+      "name": "Voltstro UPM",
+      "url": "https://upm-pkgs.voltstro.dev",
+      "scopes": [
+        "dev.voltstro",
+        "org.nuget"
+      ],
+      "overrideBuiltIns": true
+    }
+```
+
+and at least the cef linux runtime to dependencies:
+- `"dev.voltstro.unitywebbrowser.engine.cef.linux.x64": "2.2.6",`
 
 # Immutable Unity SDK - Passport
 
